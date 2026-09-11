@@ -8,8 +8,9 @@ Fixes # <!-- issue number -->
 
 ## Repo & Scope
 
-- [ ] `stellariq-app` (web / api / sdk / contracts)
-- [ ] `stellariq-contract` (indexer / price-engine / analytics / routing / internal-api)
+- [ ] `stellariq-app` (web / api / sdk)
+- [ ] `stellariq-data` (indexer / price-engine / analytics / routing / internal-api)
+- [ ] `stellariq-contract` (soroban contracts / deploy tooling)
 - [ ] `stellariq-infra` (terraform / k8s / docker / monitoring / ci)
 - [ ] `.github` (org docs / health files)
 - [ ] Cross-repo (list dependent PRs)
@@ -45,7 +46,7 @@ pnpm install && pnpm lint && pnpm typecheck && pnpm test
 - [ ] PRD section referenced above
 - [ ] `docs/` or README updated if API, pipeline or deployment changed
 - [ ] `openapi.json` regenerated (`stellariq-app`) if API changed
-- [ ] `DexAdapter` contract preserved (`stellariq-contract`) — `PRD.md:899`
+- [ ] `DexAdapter` contract preserved (`stellariq-data`) — `PRD.md:899`
 
 ## Security
 
