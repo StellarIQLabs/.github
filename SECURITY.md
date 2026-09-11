@@ -4,7 +4,7 @@
 
 | Project | Versions | Supported |
 |---------|----------|-----------|
-| `stellariq-app`, `stellariq-contract`, `stellariq-infra`, `.github` docs | `main` | Yes — only `main` receives fixes until first tagged release |
+| `stellariq-app`, `stellariq-data`, `stellariq-contract`, `stellariq-infra`, `.github` docs | `main` | Yes — only `main` receives fixes until first tagged release |
 | Tagged releases `v*` (post-MVP) | latest `v*` + previous minor | Yes |
 
 ## Reporting a Vulnerability
