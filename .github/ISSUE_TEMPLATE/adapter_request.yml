@@ -1,0 +1,38 @@
+name: "Protocol Adapter Request"
+description: "Request indexing support for a new Stellar / Soroban protocol."
+labels: ["adapter", "data"]
+body:
+  - type: input
+    id: protocol
+    attributes:
+      label: "Protocol Name & URL"
+      placeholder: "e.g. Soroswap https://soroswap.finance"
+    validations:
+      required: true
+  - type: input
+    id: contracts
+    attributes:
+      label: "Contract IDs / Classic Pool IDs"
+      placeholder: "Soroban contract C..., Stellar issuer, pool fee tiers"
+    validations:
+      required: true
+  - type: textarea
+    id: events
+    attributes:
+      label: "Swap / Pool Events (sample payload or explorer link)"
+      description: "Needed to implement DexAdapter.parseSwap."
+    validations:
+      required: true
+  - type: textarea
+    id: quote
+    attributes:
+      label: "Quoting Logic (how is price/amount calculated?)"
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I confirm this protocol is live on public Stellar (testnet or mainnet) and data is public."
+          required: true
+        - label: "I can provide a test event fixture."
+          required: true

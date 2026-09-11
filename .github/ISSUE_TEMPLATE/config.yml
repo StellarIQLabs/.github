@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Question / Idea (Discussions)"
+    url: "https://github.com/StellarIQLabs/.github/discussions"
+    about: "Ask a question or propose an idea outside the bug/feature flow."
+  - name: "Security Vulnerability"
+    url: "https://github.com/StellarIQLabs/.github/blob/main/SECURITY.md"
+    about: "Do NOT open a public issue — follow the private reporting flow."
