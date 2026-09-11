@@ -47,7 +47,7 @@ How Stellar ledger and Soroban events become the intelligence served by the API 
 
 ---
 
-## Indexer Internals (`stellariq-contract/apps/indexer`)
+## Indexer Internals (`stellariq-data/apps/indexer`)
 
 ### Polling loop
 
