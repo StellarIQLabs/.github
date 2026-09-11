@@ -6,8 +6,9 @@ Thanks for contributing — every PR makes the intelligence layer sharper.
 
 | Area | Repo | Issues |
 |------|------|--------|
-| Dashboard, API, SDK, contracts | `StellarIQLabs/stellariq-app` | `label: app` |
-| Indexer, adapters, pricing, routing | `StellarIQLabs/stellariq-contract` | `label: data` |
+| Dashboard, API, SDK | `StellarIQLabs/stellariq-app` | `label: app` |
+| Indexer, adapters, pricing, routing | `StellarIQLabs/stellariq-data` | `label: data` |
+| Soroban contracts | `StellarIQLabs/stellariq-contract` | `label: contract` |
 | Infra, K8s, CI/CD, monitoring | `StellarIQLabs/stellariq-infra` | `label: infra` |
 | Org-wide docs & health files | `StellarIQLabs/.github` (this repo) | `label: docs` |
 
@@ -18,9 +19,13 @@ Read `PRD.md` first — product behavior is defined there, not in issues.
 See `docs/DEVELOPMENT_GUIDE.md` for per-repo quickstart. Summary:
 
 ```bash
-# data
-git clone https://github.com/StellarIQLabs/stellariq-contract && cd stellariq-contract
+# data (intelligence)
+git clone https://github.com/StellarIQLabs/stellariq-data && cd stellariq-data
 cp .env.example .env && npm install && docker compose up -d postgres redis
+
+# contracts (standalone)
+git clone https://github.com/StellarIQLabs/stellariq-contract && cd stellariq-contract
+cargo test && stellar contract build --manifest-path Cargo.toml
 
 # app
 git clone https://github.com/StellarIQLabs/stellariq-app && cd stellariq-app
@@ -31,7 +36,7 @@ git clone https://github.com/StellarIQLabs/stellariq-infra && cd stellariq-infra
 docker compose up -d
 ```
 
-Prereqs: Node `>=20`, pnpm `9.15.9`, Docker, Terraform `>=1.6` (infra), Rust + `stellar` CLI (contracts).
+Prereqs: Node `>=20`, pnpm `9.15.9` (app) / npm `>=10` (data), Docker, Terraform `>=1.6` (infra), Rust + `stellar` CLI `28` (contract repo).
 
 ## Branch & commit
 
@@ -65,7 +70,7 @@ Prereqs: Node `>=20`, pnpm `9.15.9`, Docker, Terraform `>=1.6` (infra), Rust + `
 ## Code style
 
 * TypeScript strict. Shared configs live in each repo root (`tsconfig.base.json`, `.eslintrc.cjs`, `.prettierrc.json`).
-* Run `pnpm lint && pnpm typecheck && pnpm test` (app) or `npm run ...` (contract/infra) before pushing.
+* Run `pnpm lint && pnpm typecheck && pnpm test` (app) or `npm run ...` (data) or `cargo test` (contract) before pushing.
 * Pre-commit: Husky runs `lint-staged` automatically.
 * Never commit `.env`, `*.pem`, or Terraform state.
 
@@ -77,7 +82,7 @@ This is the intended extension point `PRD.md:133`:
 Create adapter -> Implement DexAdapter (getPools, getPool, parseSwap, getQuote) -> Register -> Start indexing
 ```
 
-Place it in `stellariq-contract/packages/protocols/<name>/`, add tests, and wire it in the registry — no core rewrite required. Include a test event fixture.
+Place it in `stellariq-data/packages/protocols/<name>/`, add tests, and wire it in the registry — no core rewrite required. Include a test event fixture.
 
 ## Reporting issues
 
