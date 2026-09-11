@@ -3,7 +3,7 @@
 ## Topology
 
 ```
-  ECR (per-service images)  <-  .github/workflows/build-images.yml  (reused by app + contract)
+  ECR (per-service images)  <-  .github/workflows/build-images.yml  (reused by app + data + contract)
         |
         v
   EKS 1.30 (terraform/modules/cluster, autoscaler)  <-  RDS 16 + Proxy  <-  ElastiCache Redis  <-  SQS (modules/queues)
@@ -32,7 +32,7 @@ cp .env.example .env        # never commit .env
 docker compose up -d        # postgres, redis, localstack, web, api, indexer, price-engine, analytics-engine, routing-engine
 docker compose ps           # all healthy?
 curl http://localhost:4000/health   # app
-curl http://localhost:4110/health   # contract internal-api
+curl http://localhost:4110/health   # data internal-api
 curl http://localhost:4000/v1/markets
 ./scripts/smoke.sh          # end-to-end (hits /v1/markets, /v1/quote, ws)
 ```
@@ -86,7 +86,7 @@ Images are ECR per service (`registry` module), tagged by commit SHA from CI.
 
 ## CI/CD
 
-Reusable workflows live in `stellariq-infra/.github/workflows/` and are called by `stellariq-app` and `stellariq-contract`:
+Reusable workflows live in `stellariq-infra/.github/workflows/` and are called by `stellariq-app`, `stellariq-data` and `stellariq-contract`:
 
 * `build-images.yml` — multi-arch, layer-cached builds, push to ECR with SHA tag
 * `test.yml` — lint + typecheck + test + build + `terraform fmt/validate`
@@ -104,8 +104,9 @@ Staging is continuous; production is guarded.
 ```bash
 cd stellariq-infra
 ./scripts/soroban-networks.sh testnet     # sets STELLAR_RPC_URL + passphrase
-./scripts/deploy-contracts.sh             # wraps stellar-cli, deploys contracts/Cargo.toml workspace
+./scripts/deploy-contracts.sh             # wraps stellar-cli, deploys stellariq-contract workspace
 ./scripts/soroban-networks.sh mainnet && ./scripts/deploy-contracts.sh --network mainnet
+# source: StellarIQLabs/stellariq-contract (standalone repo — no longer stellariq-app/contracts/)
 ```
 
 The simulator (`services/simulator/`) is deployed alongside the API and called pre-submission: `PRD.md:1144`.
@@ -145,7 +146,7 @@ kubectl get cronjob -n stellariq-prod  # monthly secret rotation + daily backups
 ## Checklist Before `terraform apply` to Production
 
 * [ ] `terraform fmt` + `validate` + `plan` reviewed
-* [ ] `CHANGELOG.md` bumped in app + contract
+* [ ] `CHANGELOG.md` bumped in app + data + contract
 * [ ] `smoke.sh` green in staging
 * [ ] `BACKUP` and `no-recent-backup` alarms green in Grafana
 * [ ] `ExternalSecrets` synced (`kubectl get externalsecrets -A`)
