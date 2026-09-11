@@ -11,12 +11,12 @@ Source of truth for product behavior: `PRD.md` (repo root outside `.github`). Th
   | Wallets       | <----------------------------> | stellariq-app  |
   | DEX UIs       |                               |  (product)     |
   | Bots / Agents |  unsigned XDR (never keys)    |  web + api + sdk
-  | Protocols     | <----------------------------> |  + contracts  |
+  | Protocols     | <----------------------------> |  tx builder  |
   +----------------+                               +-------+--------+
                                                          | internal REST (4110)
                                                          v
                                                  +----------------+
-                                                 | stellariq-contract
+                                                 | stellariq-data |
                                                  |  (data/intel)  | <--- Stellar RPC
                                                  |  indexer etc.  | <--- Soroban events
                                                  +----------------+
@@ -25,10 +25,15 @@ Source of truth for product behavior: `PRD.md` (repo root outside `.github`). Th
                                                          |
                                                  +----------------+
                                                  | stellariq-infra|
-                                                 | terraform + k8s|
+                                                 | terraform + k8s|  deploys app + data + contract
                                                  +----------------+
                                                          |
                                                     Cloud (AWS)
+
+  +----------------+      contract IDs / XDR helpers      +----------------+
+  | stellariq-app  | <----------------------------------> | stellariq-contract
+  |  tx builder    |      deployed via infra scripts      |  Soroban (Rust)  |
+  +----------------+                                      +----------------+
 ```
 
 * **Users `PRD.md:143`:** Traders (monitor, compare, swap), Developers (wallets, bots, AI agents), Protocols (analytics), Bots/Agents (structured feeds).
@@ -36,18 +41,19 @@ Source of truth for product behavior: `PRD.md` (repo root outside `.github`). Th
 
 ---
 
-## 2. Three-Repository Topology `PRD.md:202`
+## 2. Four-Repository Topology `PRD.md:202` (updated: data split from contract)
 
 ```
   github.com/StellarIQLabs/
   |
-  +-- stellariq-app        apps/web (3000) | apps/api (4000) | packages/* | contracts/ | tests/e2e
-  +-- stellariq-contract   apps/{indexer,price-engine,analytics-engine,routing-engine,internal-api} | packages/{core,adapters,models,protocols} | database/migrations
-  +-- stellariq-infra      terraform/modules/* | kubernetes/* | docker/ | monitoring/ | perf/ | scripts/
+  +-- stellariq-app        apps/web (3000) | apps/api (4000) | packages/* | tests/e2e   (no contracts/ — moved)
+  +-- stellariq-data       apps/{indexer,price-engine,analytics-engine,routing-engine,internal-api} | packages/{core,adapters,models,protocols} | database/migrations
+  +-- stellariq-contract   Soroban workspace (Rust + stellar-cli) | contracts/<name>/ | scripts/ | Cargo.toml | rust-toolchain.toml
+  +-- stellariq-infra      terraform/modules/* | kubernetes/* | docker/ | monitoring/ | perf/ | scripts/ (incl. deploy-contracts.sh)
   +-- .github              this repo — health files + canonical docs
 ```
 
-Dependencies (build order): `infra (network, db)` -> `contract (data flows)` -> `app (consumes data)` -> `infra (workloads, ingress, CI/CD)`.
+Dependencies (build order): `infra (network, db)` -> `data (intelligence flows)` -> `contract (on-chain IDs)` -> `app (consumes data + contract IDs)` -> `infra (workloads, ingress, CI/CD, contract deploys)`.
 
 ---
 
@@ -72,14 +78,14 @@ Dependencies (build order): `infra (network, db)` -> `contract (data flows)` -> 
   +-- packages/schemas       Zod schemas for every request/response (validation at the edge)
   +-- packages/ui            Design tokens, primitives, tables, charts, Storybook
   +-- packages/sdk           Typed REST + WS client (retry, typed errors, subscribe helpers)
-  +-- contracts/             Soroban workspace (Rust), toolchain pinned, stellar-cli
   +-- tests/e2e              Playwright (boots api + prod web)
+  (contracts moved to stellariq-contract — app builds unsigned XDR via @stellar/stellar-sdk only)
 ```
 
-### stellariq-contract `PRD.md:295` — the intelligence core
+### stellariq-data `PRD.md:295` — the intelligence core
 
 ```
-  stellariq-contract/
+  stellariq-data/
   +-- apps/indexer           RPC pollers (rpc.ts, poller.ts), ledger + Soroban event ingest, checkpoints, backfill
   |     services: asset-discovery, market/pool/swap indexing, consistency checks
   +-- apps/price-engine      VWAP (vwap.ts) + median (median.ts) + outlier (outlier.ts) + source weighting -> { price, confidence, timestamp, sources }
@@ -98,8 +104,20 @@ Dependencies (build order): `infra (network, db)` -> `contract (data flows)` -> 
 Adapter seam — how a new protocol lands `PRD.md:925`:
 
 ```
-  Create packages/protocols/<name>/  ->  implement DexAdapter  ->  register in registry  ->  start indexing
+  Create stellariq-data/packages/protocols/<name>/  ->  implement DexAdapter  ->  register in registry  ->  start indexing
 ```
+
+### stellariq-contract — standalone Soroban execution `PRD.md:289`
+
+```
+  stellariq-contract/
+  +-- contracts/<name>/      Rust Soroban contracts (router, example), Cargo.toml, Makefile, tests
+  +-- scripts/               build/deploy helpers (used by infra scripts/deploy-contracts.sh)
+  +-- rust-toolchain.toml    pinned targets (wasm32-unknown-unknown, wasm32v1-none) + stellar-cli 28
+  +-- README.md              per-contract build/test/deploy
+```
+
+Contract add path (independent from data adapters): add Rust contract -> `stellar contract build` -> infra `scripts/deploy-contracts.sh --network testnet|mainnet` -> contract IDs wired into `stellariq-app` via `NEXT_PUBLIC_SWAP_ROUTER_ID` / contract registry.
 
 ### stellariq-infra `PRD.md:335`
 
