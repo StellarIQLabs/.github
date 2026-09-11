@@ -9,7 +9,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
 **This repository is the organization health repo for `github.com/StellarIQLabs`.**  
-Files here (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, templates) apply to all three repos by default. This README is the canonical entry point for the entire project.
+Files here (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, templates) apply to all four repos by default. This README is the canonical entry point for the entire project.
 
 ---
 
@@ -22,7 +22,7 @@ Files here (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, templates) a
 - [Core Product Modules](#core-product-modules)
 - [Data Pipeline](#data-pipeline)
 - [Tech Stack](#tech-stack)
-- [Quickstart — All 3 Repos](#quickstart--all-3-repos)
+- [Quickstart — All 4 Repos](#quickstart--all-4-repos)
 - [API at a Glance](#api-at-a-glance)
 - [Non-Functional Targets](#non-functional-targets)
 - [Roadmap](#roadmap)
@@ -84,13 +84,14 @@ Principles `PRD.md:114`: **Data first · Developer first · Protocol agnostic ·
                     Stellar Network
 ```
 
-### Three-Repository Deployment `PRD.md:202`
+### Four-Repository Deployment `PRD.md:202` (updated)
 
 ```
   github.com/StellarIQLabs/
   |
-  +-- stellariq-app        Product, API, SDK, Web, Swap, Contracts
-  +-- stellariq-contract   Data & Intelligence (indexer, price, analytics, routing)
+  +-- stellariq-app        Product, API, SDK, Web, Swap  (Next.js + Fastify + SDK)
+  +-- stellariq-data       Data & Intelligence (indexer, price, analytics, routing)
+  +-- stellariq-contract   Soroban contracts (standalone Rust workspace, deploy scripts)
   +-- stellariq-infra      Cloud, DB, K8s, CI/CD, Monitoring
   +-- .github  <-- you are here (org health + canonical docs)
 ```
@@ -100,8 +101,7 @@ Principles `PRD.md:114`: **Data first · Developer first · Protocol agnostic ·
                                |
                                v
                      +-------------------+
-                     | stellariq-contract|
-                     |  Indexer          |  <- pollers, decoders, checkpoints
+                     |  stellariq-data   |  <- pollers, decoders, checkpoints
                      |  Protocol Adapters|  <- Stellar DEX, Soroswap, Phoenix, Aquarius
                      |  Price Engine     |  <- VWAP, median, outlier rejection
                      |  Analytics        |  <- volume, liquidity, OHLCV, signals
@@ -110,27 +110,30 @@ Principles `PRD.md:114`: **Data first · Developer first · Protocol agnostic ·
                                |  API / Events / Cache (Redis)
                                v
                      +-------------------+
-                     |  stellariq-app    |
+                     |   stellariq-app   |
                      |  Web  |  API      |  <- REST + WebSocket
-                     |  SDK  |  Swap UI  |  <- typed clients
-                     |  Contracts        |  <- Soroban, Tx builder
-                     +---------+---------+
-                               |
+                     |  SDK  |  Swap UI  |  <- typed clients, unsigned Tx builder
+                     +-------------------+
+                               |  contract IDs / XDR helpers
                                v
-                           END USERS  (Traders, Devs, Protocols, Bots, AI Agents)
+                     +-------------------+
+                     | stellariq-contract|  <- Soroban source of truth for execution
+                     |  example router   |     deployed via infra scripts
+                     +-------------------+
 
                      +-------------------+
                      | stellariq-infra   |
                      |  Terraform | K8s  |
                      |  Postgres, Redis, |  SQS, ECR, Monitoring, CI/CD
+                     |  deploys all of the above
                      +-------------------+
-                       underpins both app + data
+                       underpins app + data + contract
 ```
 
 ### How the pieces talk
 
 ```
-  Stellar RPC  ---> [contract: indexer] ---> Postgres (assets, markets, pools, swaps, prices)
+  Stellar RPC  ---> [data: indexer] ---> Postgres (assets, markets, pools, swaps, prices)
                                               |
                                               +-> [price-engine] -> prices + confidence
                                               +-> [analytics-engine] -> OHLCV, volume, liquidity
@@ -138,10 +141,14 @@ Principles `PRD.md:114`: **Data first · Developer first · Protocol agnostic ·
                                               |
                                           Redis cache
                                               |
-  contract: internal-api (port 4110)  <------+
+  data: internal-api (port 4110)  <-----------+
           |
           v  (internal REST)
   app: API (Fastify, port 4000) ---> Web (Next.js, port 3000) + External Consumers (SDK / REST / WS)
+          |
+          +---> contract IDs from stellariq-contract (via env NEXT_PUBLIC_SWAP_ROUTER_ID / contract registry)
+          |
+          +---> infra: Terraform + K8s deploy data, app, and contract artifacts
 ```
 
 ---
@@ -150,8 +157,9 @@ Principles `PRD.md:114`: **Data first · Developer first · Protocol agnostic ·
 
 | Repo | Path | Owns | Key Contents |
 |------|------|------|--------------|
-| **stellariq-app** | `github.com/StellarIQLabs/stellariq-app` | Dashboard, market/asset/pool pages, swap terminal, REST+WS API, SDK, auth, tx building | `apps/web`, `apps/api`, `contracts/`, `packages/sdk|types|schemas|ui` |
-| **stellariq-contract** | `github.com/StellarIQLabs/stellariq-contract` | Indexing, adapters, price, analytics, routing — the core intelligence engine | `apps/indexer`, `apps/price-engine`, `apps/analytics-engine`, `apps/routing-engine`, `apps/internal-api`, `packages/core|adapters|models|protocols`, `database/` |
+| **stellariq-app** | `github.com/StellarIQLabs/stellariq-app` | Dashboard, market/asset/pool pages, swap terminal, REST+WS API, SDK, auth, unsigned Tx building | `apps/web`, `apps/api`, `packages/sdk|types|schemas|ui` (no `contracts/` — moved) |
+| **stellariq-data** | `github.com/StellarIQLabs/stellariq-data` | Indexing, adapters, price, analytics, routing — the core intelligence engine | `apps/indexer`, `apps/price-engine`, `apps/analytics-engine`, `apps/routing-engine`, `apps/internal-api`, `packages/core|adapters|models|protocols`, `database/` |
+| **stellariq-contract** | `github.com/StellarIQLabs/stellariq-contract` | Soroban contracts, on-chain execution logic, deploy tooling | `contracts/` (Rust workspace), `scripts/`, `Cargo.toml`, `rust-toolchain.toml`, `Makefile` |
 | **stellariq-infra** | `github.com/StellarIQLabs/stellariq-infra` | Cloud, DB, containers, K8s, CI/CD, monitoring, contract deploy infra | `terraform/modules/*`, `kubernetes/*`, `docker/`, `monitoring/`, `perf/`, `.github/workflows/` |
 | **.github** | `github.com/StellarIQLabs/.github` | Org-wide health files + canonical docs | This repo |
 
@@ -182,6 +190,7 @@ Detailed per-repo maps: [`docs/REPOSITORIES.md`](./docs/REPOSITORIES.md).
 * **Pool Intelligence `PRD.md:507`** — TVL, reserves, volume, fees, volume/TVL, liquidity change `PRD.md:523`, historical view.
 * **Swap & Route Optimization `PRD.md:543` `PRD.md:570`** — evaluates direct, multi-hop, split across pools/protocols; optimizes for **net output** `PRD.md:602`.
 * **Market Signals `PRD.md:641`** — price discrepancy `PRD.md:649`, liquidity event `PRD.md:661`, large swap `PRD.md:668`.
+* **Contracts `PRD.md:289` (standalone)** — Soroban router / execution contracts now versioned and deployed from `stellariq-contract`; app consumes their IDs/XDR via helpers, infra deploys them.
 
 ---
 
@@ -191,7 +200,7 @@ Detailed per-repo maps: [`docs/REPOSITORIES.md`](./docs/REPOSITORIES.md).
   Stellar
      |
      v  RPC / Ledger / Events
-  Ingestion
+  Ingestion (stellariq-data)
      |
      v  Protocol Decoders
   Protocol Adapters   (DexAdapter interface PRD.md:899)
@@ -203,18 +212,20 @@ Detailed per-repo maps: [`docs/REPOSITORIES.md`](./docs/REPOSITORIES.md).
   Intelligence Engines
      |   Pricing  Analytics  Routing
      v
-  StellarIQ API  (REST + WebSocket)
+  StellarIQ API  (REST + WebSocket)  <- stellariq-app
      |
      v  Dashboard, SDK, External Consumers
+     |
+     +-> Soroban execution (stellariq-contract IDs referenced in quotes/Tx builder)
 ```
 
 Protocol add path — `PRD.md:925`:
 
 ```
-  Create adapter -> Implement DexAdapter -> Register -> Start indexing
+  Create adapter (stellariq-data/packages/protocols/<name>/) -> Implement DexAdapter -> Register -> Start indexing
 ```
 
-No platform-wide changes required.
+No platform-wide changes required. Contract add path is independent: add Rust contract in `stellariq-contract` -> `stellar contract build` -> infra `scripts/deploy-contracts.sh` deploys.
 
 ---
 
@@ -225,33 +236,33 @@ No platform-wide changes required.
 | Web | Next.js 14 App Router, Tailwind, `lightweight-charts` | SSR dashboard with shared design system |
 | API | Fastify 5 + Zod, WebSocket gateway | Typed, validated edge, consistent envelopes |
 | SDK | TypeScript, `zod` | Typed REST + WS for wallets/bots/agents |
-| Contracts | Rust, Soroban, `stellar-cli` | Non-custodial tx building `PRD.md:129` |
-| Data | Node 20, Postgres 16, Redis 7, SQS, Drizzle | Historical dataset moat `PRD.md:1280` |
+| Contracts | Rust, Soroban, `stellar-cli` (in `stellariq-contract`) | Non-custodial tx building `PRD.md:129` |
+| Data | Node 20, Postgres 16, Redis 7, SQS, Drizzle (in `stellariq-data`) | Historical dataset moat `PRD.md:1280` |
 | Infra | Terraform, EKS 1.30, ECR, RDS, ElastiCache, Helm/K8s | 99.9% availability target `PRD.md:1130` |
-| Tooling | pnpm workspaces, Turborepo style, ESLint/Prettier/Husky, Vitest + `node:test`, Playwright | Monorepo rigor |
+| Tooling | pnpm workspaces (app), npm workspaces (data), ESLint/Prettier/Husky, Vitest + `node:test`, Playwright | Monorepo rigor |
 | Observability | Prometheus, Grafana, Loki, OpenTelemetry, Sentry | Latency & consistency tracking |
 
 Scale target without redesign `PRD.md:1148`: `10+ protocols, 100k assets, 1M swaps/day, 10k API users`.
 
 ---
 
-## Quickstart — All 3 Repos
+## Quickstart — All 4 Repos
 
 ### Prerequisites
 
 | Tool | Version |
 |------|---------|
 | Node.js | `>=20` |
-| pnpm `9.15.9` | `corepack enable` or standalone |
+| pnpm `9.15.9` (app) / npm `>=10` (data) | `corepack enable` |
 | Docker + Compose | recent |
 | Terraform `>=1.6`, `aws-cli v2`, `kubectl >=1.29` | infra only |
-| Rust + `stellar` CLI 28 | `stellariq-app/contracts` only |
+| Rust stable + `stellar` CLI 28 | `stellariq-contract` only |
 
-### 1. Data layer first — `stellariq-contract`
+### 1. Data layer first — `stellariq-data`
 
 ```bash
-git clone https://github.com/StellarIQLabs/stellariq-contract
-cd stellariq-contract
+git clone https://github.com/StellarIQLabs/stellariq-data
+cd stellariq-data
 cp .env.example .env        # postgres/redis/RPC defaults for localhost
 npm install
 docker compose up -d postgres redis
@@ -261,24 +272,35 @@ docker compose up -d indexer price-engine analytics-engine routing-engine
 # ports: indexer 4101, price 4102, analytics 4103, routing 4104, internal-api 4110
 ```
 
-### 2. Product layer — `stellariq-app`
+### 2. Contracts — `stellariq-contract` (standalone)
+
+```bash
+git clone https://github.com/StellarIQLabs/stellariq-contract
+cd stellariq-contract
+# Rust toolchain pinned in rust-toolchain.toml
+cargo test && stellar contract build --manifest-path Cargo.toml  # or per-contract Makefile
+# deploys are driven by stellariq-infra/scripts/deploy-contracts.sh
+```
+
+### 3. Product layer — `stellariq-app`
 
 ```bash
 git clone https://github.com/StellarIQLabs/stellariq-app
 cd stellariq-app
 pnpm install
 cp .env.example .env && cp apps/web/.env.example apps/web/.env && cp apps/api/.env.example apps/api/.env
+# NEXT_PUBLIC_SWAP_ROUTER_ID points at contract IDs deployed from stellariq-contract
 pnpm dev:api   # http://localhost:4000  ws at /ws
 pnpm dev:web   # http://localhost:3000
 ```
 
-### 3. Infra (full parity locally)
+### 4. Infra (full parity locally)
 
 ```bash
 git clone https://github.com/StellarIQLabs/stellariq-infra
 cd stellariq-infra
 cp .env.example .env
-docker compose up -d          # postgres, redis, localstack, web, api, 4 engines
+docker compose up -d          # postgres, redis, localstack, web, api, 4 data engines
 # cloud deploy: see docs/DEPLOYMENT_GUIDE.md
 ```
 
@@ -303,6 +325,8 @@ WS  /ws  -> { action: "subscribe", channel: "XLM/USDC:price" } // also :trades :
 
 Tiers: Free (public dashboard + basic), Developer `$19-49`, Pro `$99-299`, Enterprise custom `PRD.md:1164`. Rate limits via `x-ratelimit-*` + `Retry-After`; `x-api-key` optional (no key = free).
 
+Quotes resolve to contract IDs from `stellariq-contract`; `stellariq-app` then builds unsigned XDR via `@stellar/stellar-sdk` for wallet signing — never custody `PRD.md:129`.
+
 ---
 
 ## Non-Functional Targets `PRD.md:1117`
@@ -321,12 +345,12 @@ Tiers: Free (public dashboard + basic), Developer `$19-49`, Pro `$99-299`, Enter
 
 | Phase | Weeks | Outcome | Docs |
 |-------|-------|---------|------|
-| 1 Data Foundation | 1-2 | Repo setup, RPC, DB schema, asset indexing, adapter seam | `PRD.md:1316` |
+| 1 Data Foundation | 1-2 | Repo setup, RPC, DB schema, asset indexing, adapter seam (data) + contract workspace init | `PRD.md:1316` |
 | 2 DeFi Indexing | 3-4 | Pools, swaps, markets, adapters, price/volume/liquidity | `PRD.md:1330` |
 | 3 Analytics | 5 | Dashboard, asset/market/pool pages, historical charts | `PRD.md:1346` |
 | 4 Swap Intelligence | 6 | Quote engine, route discovery, impact/fees, ranking | `PRD.md:1362` |
 | 5 Developer Platform | 7 | Auth, keys, rate limits, WebSocket, docs, SDK | `PRD.md:1376` |
-| 6 Launch | 8 | Perf, security, monitoring, docs, demo, production | `PRD.md:1391` |
+| 6 Launch | 8 | Perf, security, monitoring, docs, demo, production (incl. contract deploy) | `PRD.md:1391` |
 | V1.5 / V2 / V3 | after MVP | Alerts, full execution, smart splitting, portfolio, agent-ready OS | `PRD.md:1430` |
 
 Full roadmap: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
@@ -337,11 +361,11 @@ Full roadmap: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 | Doc | What it covers |
 |-----|----------------|
-| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | System context, 3-repo topology, data flow, component diagrams |
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | System context, 4-repo topology, data flow, component diagrams |
 | [`docs/REPOSITORIES.md`](./docs/REPOSITORIES.md) | Per-repo layout, entry points, build/run/test matrix |
 | [`docs/DATA_PIPELINE.md`](./docs/DATA_PIPELINE.md) | Ingest -> normalize -> store -> intelligence -> API with sequence diagram |
 | [`docs/API_SPEC.md`](./docs/API_SPEC.md) | REST + WebSocket contract, auth tiers, error envelope, OpenAPI |
-| [`docs/DEVELOPMENT_GUIDE.md`](./docs/DEVELOPMENT_GUIDE.md) | Workspace setup, conventions, testing, SDK usage |
+| [`docs/DEVELOPMENT_GUIDE.md`](./docs/DEVELOPMENT_GUIDE.md) | Workspace setup, conventions, testing, SDK + contract dev |
 | [`docs/DEPLOYMENT_GUIDE.md`](./docs/DEPLOYMENT_GUIDE.md) | Local compose, Terraform, K8s, CI/CD, contract deploy |
 | [`docs/SECURITY_MODEL.md`](./docs/SECURITY_MODEL.md) | Threat model, non-custodial execution, secrets, rate limiting |
 | [`docs/ROADMAP.md`](./docs/ROADMAP.md) | Phased delivery, Definition of Done, future V1.5-V3 |
