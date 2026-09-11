@@ -27,20 +27,22 @@
 * Aggregates prices (VWAP, median, outlier rejection, confidence)
 * Tracks pools, liquidity, volume, trades — with history (1H → 1M)
 * Ranks swap routes by **net output** across direct / multi-hop / split execution
-* Serves everything over a typed REST + WebSocket API and SDK
+* Serves everything over a typed REST + WebSocket API and SDK; execution via standalone Soroban contracts
 
-**Three repos, one platform:**
+**Four repos, one platform:**
 
 | Repo | Role |
 |------|------|
-| [`stellariq-app`](https://github.com/StellarIQLabs/stellariq-app) | Web dashboard, API, SDK, swap UI, Soroban contracts |
-| [`stellariq-contract`](https://github.com/StellarIQLabs/stellariq-contract) | Indexer, adapters, price/analytics/routing engines — the intelligence core |
-| [`stellariq-infra`](https://github.com/StellarIQLabs/stellariq-infra) | Terraform, K8s, Postgres/Redis, CI/CD, monitoring |
+| [`stellariq-app`](https://github.com/StellarIQLabs/stellariq-app) | Web dashboard, API, SDK, swap UI (unsigned Tx builder) |
+| [`stellariq-data`](https://github.com/StellarIQLabs/stellariq-data) | Indexer, adapters, price/analytics/routing engines — the intelligence core |
+| [`stellariq-contract`](https://github.com/StellarIQLabs/stellariq-contract) | Soroban contracts (Rust, `stellar-cli`) — standalone deployable |
+| [`stellariq-infra`](https://github.com/StellarIQLabs/stellariq-infra) | Terraform, K8s, Postgres/Redis, CI/CD, monitoring + contract deploys |
 | [`.github`](https://github.com/StellarIQLabs/.github) | Org health files + canonical docs (you are here) |
 
 ```
-  Stellar Network -> [contract: data] -> [app: product] -> users
-                     [infra] underpins both
+  Stellar Network -> [data: intelligence] -> [app: product] -> users
+                     [contract: on-chain execution] ----^
+                     [infra] underpins all
 ```
 
 * **Docs:** [`StellarIQLabs/.github/README.md`](https://github.com/StellarIQLabs/.github#readme) is the entry point; `docs/` holds architecture, pipeline, API and deployment guides.
