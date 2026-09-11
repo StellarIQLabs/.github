@@ -17,7 +17,7 @@ Before filing, check:
 
 ## Filing an Issue — What to Include
 
-* Repo (`stellariq-app` / `stellariq-contract` / `stellariq-infra` / `.github`) + commit SHA
+* Repo (`stellariq-app` / `stellariq-data` / `stellariq-contract` / `stellariq-infra` / `.github`) + commit SHA
 * Node / pnpm / Terraform / Docker versions
 * `.env` keys present (never paste values) + error log excerpt
 * Steps to reproduce + expected vs actual behavior
