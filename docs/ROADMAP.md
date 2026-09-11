@@ -24,11 +24,12 @@ Source: `PRD.md:1314` (phases) + `PRD.md:1405` (Definition of Done) + `PRD.md:14
 
 ```
   Phase1  ->  Phase2  ->  Phase3  ->  Phase4  ->  Phase5  ->  Phase6
-  infra/     contract/   contract    contract    app/auth     infra launch
-  db, net    adapters    + app web   routing     + SDK        prod
+  infra/     data/       data        data        app/auth     infra launch
+  db, net    adapters    + app web   routing     + SDK        prod (+ contract deploy)
+  +contract init
 ```
 
-`infra` day-0 (network, postgres, redis) unblocks all; `contract` must emit `internal-api` before `app`'s `/ready` can go `200`.
+`infra` day-0 (network, postgres, redis) unblocks all; `data` must emit `internal-api` before `app`'s `/ready` can go `200`; `contract` IDs must be deployed before swap signing works.
 
 ---
 
