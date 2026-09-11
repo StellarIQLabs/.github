@@ -18,7 +18,7 @@
   Stellar (Soroban + DEX)
 ```
 
-StellarIQ **never** receives, stores, or logs private keys or seed phrases. The `contracts/` workspace only builds unsigned transactions; simulation (`services/simulator/`) is pre-submission with no key material.
+StellarIQ **never** receives, stores, or logs private keys or seed phrases. `stellariq-contract` holds the on-chain logic; `stellariq-app` only builds unsigned transactions via `@stellar/stellar-sdk`; simulation (`stellariq-infra/services/simulator/`) is pre-submission with no key material.
 
 ---
 
@@ -31,8 +31,8 @@ StellarIQ **never** receives, stores, or logs private keys or seed phrases. The 
   +-----------+      +-------+--------+      +-----------+
                              |  internal REST :4110
                              v
-                     +----------------+      +-----------+
-                     |stellariq-contract| --->| Postgres |
+                      +----------------+      +-----------+
+                     | stellariq-data | --->| Postgres |
                      | indexer etc.   |      | Redis    |
                      +----------------+      | SQS      |
                              ^               +-----------+
@@ -77,7 +77,7 @@ StellarIQ **never** receives, stores, or logs private keys or seed phrases. The 
 | Postgres injection | Drizzle parameterized queries only, no string-concatenated SQL |
 | XSS in dashboard | Next.js escaping, CSP via Helmet, no `dangerouslySetInnerHTML` for chain data (sanitized) |
 | Env leakage via logs | Logger redacts `*TOKEN*`, `*SECRET*`, `*KEY*` patterns; Loki retention 30d |
-| Supply chain compromise of adapter | Adapter tests run with fixture events in CI; new adapters require fixture + review in `stellariq-contract/packages/protocols/` |
+| Supply chain compromise of adapter | Adapter tests run with fixture events in CI; new adapters require fixture + review in `stellariq-data/packages/protocols/` |
 
 ---
 
