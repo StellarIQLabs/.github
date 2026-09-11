@@ -5,32 +5,33 @@
 | Tool | Version | Notes |
 |------|---------|-------|
 | Node.js | `>=20` | `node -v` |
-| pnpm `9.15.9` | `packageManager: pnpm@9.15.9` | `corepack enable` or `npm i -g pnpm@9.15.9` |
-| npm | `>=10` | only for `stellariq-contract` (npm workspaces) |
+| pnpm `9.15.9` | `packageManager: pnpm@9.15.9` | app only: `corepack enable` or `npm i -g pnpm@9.15.9` |
+| npm | `>=10` | only for `stellariq-data` (npm workspaces) |
 | Docker + Compose | recent | local parity |
 | `terraform >=1.6`, `aws-cli v2`, `kubectl >=1.29` | infra only | |
-| Rust stable + `stellar` CLI `28` | `stellariq-app/contracts` only | `rust-toolchain.toml` pins targets |
+| Rust stable + `stellar` CLI `28` | `stellariq-contract` only | `rust-toolchain.toml` pins targets |
 
 ---
 
-## First Clone — Three Repos
+## First Clone — Four Repos
 
 ```bash
 mkdir StellarIQLabs && cd StellarIQLabs
+git clone https://github.com/StellarIQLabs/stellariq-data
 git clone https://github.com/StellarIQLabs/stellariq-contract
 git clone https://github.com/StellarIQLabs/stellariq-app
 git clone https://github.com/StellarIQLabs/stellariq-infra
 git clone https://github.com/StellarIQLabs/.github
 cat .github/README.md   # start here
-cat PRD.md               # spec is law (parent of all 3 repos)
+cat PRD.md               # spec is law (parent of all repos)
 ```
 
 ---
 
-## stellariq-contract — Data Layer
+## stellariq-data — Data Layer
 
 ```bash
-cd stellariq-contract
+cd stellariq-data
 cp .env.example .env   # STELLAR_RPC_URL, DATABASE_URL, REDIS_URL, ports 4101..4110
 npm install
 docker compose up -d postgres redis   # wait healthy: docker compose ps
@@ -61,7 +62,7 @@ cp .env.example .env          # DATABASE_URL, REDIS_URL, INTERNAL_DATA_URL=http:
 cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env   # NEXT_PUBLIC_API_URL=http://localhost:4000  NEXT_PUBLIC_WS_URL=ws://localhost:4000/ws
 pnpm install
-pnpm dev:api    # Fastify on :4000, ws at /ws  (reads data from contract internal-api or mock)
+pnpm dev:api    # Fastify on :4000, ws at /ws  (reads data from stellariq-data internal-api or mock)
 pnpm dev:web    # Next.js on :3000
 # or: pnpm dev  (concurrent)
 pnpm lint && pnpm typecheck && pnpm test && pnpm build   # gate, same as CI
@@ -73,8 +74,21 @@ Conventions:
 * Zod everywhere — `packages/schemas` defines every request/response; `apps/api/src/routes/*` validates at the edge and returns `{ error, message, statusCode }` envelopes.
 * Shared types in `packages/types`; UI tokens in `packages/ui` (Tailwind preset) — `apps/web` imports both.
 * SDK: `packages/sdk` typed client wrapping `openapi.json` (served by `apps/api` as `GET /openapi.json` + `GET /docs`). Never hand-roll fetch — update the spec, regenerate.
-* Contracts: `cd contracts && cargo fmt && cargo clippy && cargo test`; `pnpm --filter stellariq-contracts toolchain` checks `rust-toolchain.toml`.
+* Contracts live in `StellarIQLabs/stellariq-contract` — app only holds `apps/web/src/lib/{contracts.ts,txBuilder.ts,wallet.ts}` integration helpers. See contract section below.
 * Web routes: `app/(group)/page.tsx` with `loading.tsx`/`error.tsx`/`not-found.tsx` per PRD pages `PRD.md:767`.
+
+---
+
+## stellariq-contract — Contracts (standalone)
+
+```bash
+cd stellariq-contract
+cargo fmt --check && cargo clippy -- -D warnings
+cargo test
+stellar contract build --manifest-path contracts/<name>/Cargo.toml
+# deploy via stellariq-infra/scripts/deploy-contracts.sh --network testnet|mainnet
+# wire IDs into stellariq-app via NEXT_PUBLIC_SWAP_ROUTER_ID
+```
 
 ---
 
@@ -102,15 +116,18 @@ Full deploy, CI/CD and contract deploy: `docs/DEPLOYMENT_GUIDE.md`.
 # app
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
 
-# contract
+# data
 npm run lint && npm run typecheck && npm run test && npm run build
+
+# contract
+cargo fmt --check && cargo clippy -- -D warnings && cargo test
 
 # infra
 terraform fmt -check -recursive && terraform validate
 docker compose config -q
 ```
 
-CI enforces the same gates (`.github/workflows/` per repo; `stellariq-infra` holds the reusable workflows consumed by the other two).
+CI enforces the same gates (`.github/workflows/` per repo; `stellariq-infra` holds the reusable workflows consumed by app + data + contract).
 
 Pre-commit: Husky + `lint-staged` runs Prettier + ESLint on staged files. Do not `--no-verify`.
 
@@ -134,8 +151,8 @@ ws.subscribe("XLM/USDC:price", (e) => console.log(e.price))
 
 | Symptom | Fix |
 |---------|-----|
-| `ECONNREFUSED 5432` in contract | `docker compose up -d postgres && docker compose ps` (healthy?) + check `DATABASE_URL` |
-| `READY 503` from app `/ready` | `contract` internal-api `:4110` not up — start `stellariq-contract` first (app degrades to free tier + mock) |
+| `ECONNREFUSED 5432` in data | `docker compose up -d postgres && docker compose ps` (healthy?) + check `DATABASE_URL` |
+| `READY 503` from app `/ready` | `stellariq-data` internal-api `:4110` not up — start `stellariq-data` first (app degrades to free tier + mock) |
 | `x-ratelimit-*` `429` locally | Redis not running or `REDIS_URL` wrong — `docker compose up -d redis` |
 | `STELLAR_RPC_URL` errors | Check `.env` testnet URL; rate-limited fallback is automatic retry with backoff — see `apps/indexer/src/rpc.ts` |
 | `terraform init` fails | Missing `backend.hcl` (copy from `backend.hcl.example`) or `aws sso login` required |
