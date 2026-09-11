@@ -6,7 +6,7 @@ body:
     id: repo
     attributes:
       label: "Target Repo"
-      options: ["stellariq-app", "stellariq-contract", "stellariq-infra", ".github", "cross-repo"]
+      options: ["stellariq-app", "stellariq-data", "stellariq-contract", "stellariq-infra", ".github", "cross-repo"]
     validations:
       required: true
   - type: textarea
