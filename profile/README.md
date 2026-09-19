@@ -4,6 +4,15 @@
 
 **StellarIQ** is the data and intelligence infrastructure layer for the Stellar ecosystem — not another DEX, not another explorer, not just another price feed.
 
+### 🚀 Live Demo
+
+- **Web dashboard:** https://stellariq-app-web-49hh.vercel.app
+- **API docs (Swagger):** https://stellariq-api-p1hz.onrender.com/docs
+- **API health:** https://stellariq-api-p1hz.onrender.com/health
+- **Swap router contract (testnet):** [`CC277AA6…VHSP`](https://stellar.expert/explorer/testnet/contract/CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP)
+
+_API is on Render free tier — first request after idle may cold-start (~30–60s)._
+
 ```
                 MARKET DATA
                       +

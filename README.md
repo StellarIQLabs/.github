@@ -8,6 +8,19 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
+## 🚀 Live Demo
+
+| Resource | Link |
+| --- | --- |
+| **Web dashboard** | https://stellariq-app-web-49hh.vercel.app |
+| **API docs (Swagger UI)** | https://stellariq-api-p1hz.onrender.com/docs |
+| **API health check** | https://stellariq-api-p1hz.onrender.com/health |
+| **Swap router contract (testnet)** | [`CC277AA6…VHSP`](https://stellar.expert/explorer/testnet/contract/CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP) |
+
+> ℹ️ The API runs on Render's free tier and may take 30–60s to cold-start after idle. Try it live: `curl https://stellariq-api-p1hz.onrender.com/v1/markets`
+
+---
+
 **This repository is the organization health repo for `github.com/StellarIQLabs`.**  
 Files here (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, templates) apply to all four repos by default. This README is the canonical entry point for the entire project.
 
