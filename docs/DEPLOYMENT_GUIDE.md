@@ -39,7 +39,7 @@ curl http://localhost:4000/v1/markets
 
 ---
 
-## Cloud — Terraform
+## Cloud - Terraform
 
 ```bash
 cd stellariq-infra/terraform
@@ -88,12 +88,12 @@ Images are ECR per service (`registry` module), tagged by commit SHA from CI.
 
 Reusable workflows live in `stellariq-infra/.github/workflows/` and are called by `stellariq-app`, `stellariq-data` and `stellariq-contract`:
 
-* `build-images.yml` — multi-arch, layer-cached builds, push to ECR with SHA tag
-* `test.yml` — lint + typecheck + test + build + `terraform fmt/validate`
-* `security-scan.yml` — `npm audit` / `cargo audit` + dependency + image scans
-* `deploy-staging.yml` — auto on `push` to `main` when tests + scans pass
-* `deploy-production.yml` — manual approval gate (`environment: production`), then `db-migrate` job -> rollout -> `smoke.sh` -> auto-rollback on probe failure
-* `shared-docs.yml` — docs lint for `.github`
+* `build-images.yml` - multi-arch, layer-cached builds, push to ECR with SHA tag
+* `test.yml` - lint + typecheck + test + build + `terraform fmt/validate`
+* `security-scan.yml` - `npm audit` / `cargo audit` + dependency + image scans
+* `deploy-staging.yml` - auto on `push` to `main` when tests + scans pass
+* `deploy-production.yml` - manual approval gate (`environment: production`), then `db-migrate` job -> rollout -> `smoke.sh` -> auto-rollback on probe failure
+* `shared-docs.yml` - docs lint for `.github`
 
 Staging is continuous; production is guarded.
 
@@ -106,7 +106,7 @@ cd stellariq-infra
 ./scripts/soroban-networks.sh testnet     # sets STELLAR_RPC_URL + passphrase
 ./scripts/deploy-contracts.sh             # wraps stellar-cli, deploys stellariq-contract workspace
 ./scripts/soroban-networks.sh mainnet && ./scripts/deploy-contracts.sh --network mainnet
-# source: StellarIQLabs/stellariq-contract (standalone repo — no longer stellariq-app/contracts/)
+# source: StellarIQLabs/stellariq-contract (standalone repo - no longer stellariq-app/contracts/)
 ```
 
 The simulator (`services/simulator/`) is deployed alongside the API and called pre-submission: `PRD.md:1144`.

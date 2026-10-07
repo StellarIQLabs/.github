@@ -10,7 +10,7 @@ Source of truth: `PRD.md:679` (REST) + `PRD.md:739` (WebSocket). OpenAPI is serv
 * **Content type:** `application/json` only.
 * **Envelopes:**
   * Success: body as documented per endpoint.
-  * Error: `{ "error": "CODE", "message": "human text", "statusCode": 429 }` — consistent across REST and WS errors.
+  * Error: `{ "error": "CODE", "message": "human text", "statusCode": 429 }` - consistent across REST and WS errors.
 * **Validation:** Every request body/query is Zod-validated at the edge (`packages/schemas` in `stellariq-app`). Invalid -> `400` with field-level detail.
 * **CORS:** Allowlist per env, preflight handled. Helmet + global sanitization in `apps/api`.
 * **Health:** `GET /health` (liveness, always `200` when process up), `GET /ready` (`200` only when downstream `contract: internal-api` is reachable, else `503`).
@@ -102,7 +102,7 @@ GET /v1/swaps/recent?limit=25
                   "inputAmount": "10000", "outputAmount": "2370", "timestamp": 1789060000 } ] }
 ```
 
-### Quotes & Routes `PRD.md:543` `PRD.md:570` — core differentiator
+### Quotes & Routes `PRD.md:543` `PRD.md:570` - core differentiator
 
 ```
 GET /v1/quote?from=XLM&to=USDC&amount=10000

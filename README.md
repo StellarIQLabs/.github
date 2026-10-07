@@ -1,7 +1,7 @@
-# StellarIQ — Intelligence for Stellar DeFi
+# StellarIQ - Intelligence for Stellar DeFi
 
 > **The data and intelligence infrastructure layer for Stellar DeFi.**  
-> Real-time prices, liquidity, swaps, markets and routing — unified into one API, dashboard and SDK.
+> Real-time prices, liquidity, swaps, markets and routing - unified into one API, dashboard and SDK.
 
 [![Stellar](https://img.shields.io/badge/Network-Stellar%20%7C%20Soroban-000000?logo=stellar)](https://stellar.org)
 [![Status](https://img.shields.io/badge/Status-MVP_Build-blue)](./docs/ROADMAP.md)
@@ -17,7 +17,7 @@
 | **API health check** | https://stellariq-api-p1hz.onrender.com/health |
 | **Swap router contract (testnet)** | [`CC277AA6…VHSP`](https://stellar.expert/explorer/testnet/contract/CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP) |
 
-> ℹ️ The API runs on Render's free tier and may take 30–60s to cold-start after idle. Try it live: `curl https://stellariq-api-p1hz.onrender.com/v1/markets`
+> ℹ️ The API runs on Render's free tier and may take 30-60s to cold-start after idle. Try it live: `curl https://stellariq-api-p1hz.onrender.com/v1/markets`
 
 ---
 
@@ -35,7 +35,7 @@ Files here (`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, templates) a
 - [Core Product Modules](#core-product-modules)
 - [Data Pipeline](#data-pipeline)
 - [Tech Stack](#tech-stack)
-- [Quickstart — All 4 Repos](#quickstart--all-4-repos)
+- [Quickstart - All 4 Repos](#quickstart--all-4-repos)
 - [API at a Glance](#api-at-a-glance)
 - [Non-Functional Targets](#non-functional-targets)
 - [Roadmap](#roadmap)
@@ -61,8 +61,8 @@ It answers in real time:
 * How much price impact will my trade create?
 * Where are arbitrage spreads forming?
 
-Tagline: **Intelligence for Stellar DeFi** — `PRD.md:5`  
-Network: **Stellar / Soroban** — DeFi Data, Analytics & Swap Intelligence.
+Tagline: **Intelligence for Stellar DeFi** - `PRD.md:5`  
+Network: **Stellar / Soroban** - DeFi Data, Analytics & Swap Intelligence.
 
 ---
 
@@ -74,7 +74,7 @@ Building on Stellar today means rebuilding the same infra repeatedly:
   Indexer → Price engine → Pool tracker → Analytics → Historical DB → Routing engine
 ```
 
-StellarIQ turns that into a reusable platform so wallets, DEX frontends, bots and AI agents can consume intelligence instead of rebuilding it — see `PRD.md:84`.
+StellarIQ turns that into a reusable platform so wallets, DEX frontends, bots and AI agents can consume intelligence instead of rebuilding it - see `PRD.md:84`.
 
 Principles `PRD.md:114`: **Data first · Developer first · Protocol agnostic · Non-custodial · Modular · Explainable intelligence**.
 
@@ -170,8 +170,8 @@ Principles `PRD.md:114`: **Data first · Developer first · Protocol agnostic ·
 
 | Repo | Path | Owns | Key Contents |
 |------|------|------|--------------|
-| **stellariq-app** | `github.com/StellarIQLabs/stellariq-app` | Dashboard, market/asset/pool pages, swap terminal, REST+WS API, SDK, auth, unsigned Tx building | `apps/web`, `apps/api`, `packages/sdk|types|schemas|ui` (no `contracts/` — moved) |
-| **stellariq-data** | `github.com/StellarIQLabs/stellariq-data` | Indexing, adapters, price, analytics, routing — the core intelligence engine | `apps/indexer`, `apps/price-engine`, `apps/analytics-engine`, `apps/routing-engine`, `apps/internal-api`, `packages/core|adapters|models|protocols`, `database/` |
+| **stellariq-app** | `github.com/StellarIQLabs/stellariq-app` | Dashboard, market/asset/pool pages, swap terminal, REST+WS API, SDK, auth, unsigned Tx building | `apps/web`, `apps/api`, `packages/sdk|types|schemas|ui` (no `contracts/` - moved) |
+| **stellariq-data** | `github.com/StellarIQLabs/stellariq-data` | Indexing, adapters, price, analytics, routing - the core intelligence engine | `apps/indexer`, `apps/price-engine`, `apps/analytics-engine`, `apps/routing-engine`, `apps/internal-api`, `packages/core|adapters|models|protocols`, `database/` |
 | **stellariq-contract** | `github.com/StellarIQLabs/stellariq-contract` | Soroban contracts, on-chain execution logic, deploy tooling | `contracts/` (Rust workspace), `scripts/`, `Cargo.toml`, `rust-toolchain.toml`, `Makefile` |
 | **stellariq-infra** | `github.com/StellarIQLabs/stellariq-infra` | Cloud, DB, containers, K8s, CI/CD, monitoring, contract deploy infra | `terraform/modules/*`, `kubernetes/*`, `docker/`, `monitoring/`, `perf/`, `.github/workflows/` |
 | **.github** | `github.com/StellarIQLabs/.github` | Org-wide health files + canonical docs | This repo |
@@ -197,13 +197,13 @@ Detailed per-repo maps: [`docs/REPOSITORIES.md`](./docs/REPOSITORIES.md).
                       Swap  -> Route Optimization -> Swap Execution (quote only in MVP -> unsigned Tx in V1)
 ```
 
-* **Asset Intelligence `PRD.md:388`** — normalized registry (`code`, `issuer`, `decimals`, price, volume, liquidity, verification).
-* **Price Intelligence `PRD.md:430`** — VWAP / median / source weighting / outlier detection -> `{ asset, price, currency, timestamp, sources, confidence }` `PRD.md:442`.
-* **Market Analytics `PRD.md:469`** — per-pair price, 24h change, volume, liquidity, spread, OHLCV `PRD.md:494`, market depth.
-* **Pool Intelligence `PRD.md:507`** — TVL, reserves, volume, fees, volume/TVL, liquidity change `PRD.md:523`, historical view.
-* **Swap & Route Optimization `PRD.md:543` `PRD.md:570`** — evaluates direct, multi-hop, split across pools/protocols; optimizes for **net output** `PRD.md:602`.
-* **Market Signals `PRD.md:641`** — price discrepancy `PRD.md:649`, liquidity event `PRD.md:661`, large swap `PRD.md:668`.
-* **Contracts `PRD.md:289` (standalone)** — Soroban router / execution contracts now versioned and deployed from `stellariq-contract`; app consumes their IDs/XDR via helpers, infra deploys them.
+* **Asset Intelligence `PRD.md:388`** - normalized registry (`code`, `issuer`, `decimals`, price, volume, liquidity, verification).
+* **Price Intelligence `PRD.md:430`** - VWAP / median / source weighting / outlier detection -> `{ asset, price, currency, timestamp, sources, confidence }` `PRD.md:442`.
+* **Market Analytics `PRD.md:469`** - per-pair price, 24h change, volume, liquidity, spread, OHLCV `PRD.md:494`, market depth.
+* **Pool Intelligence `PRD.md:507`** - TVL, reserves, volume, fees, volume/TVL, liquidity change `PRD.md:523`, historical view.
+* **Swap & Route Optimization `PRD.md:543` `PRD.md:570`** - evaluates direct, multi-hop, split across pools/protocols; optimizes for **net output** `PRD.md:602`.
+* **Market Signals `PRD.md:641`** - price discrepancy `PRD.md:649`, liquidity event `PRD.md:661`, large swap `PRD.md:668`.
+* **Contracts `PRD.md:289` (standalone)** - Soroban router / execution contracts now versioned and deployed from `stellariq-contract`; app consumes their IDs/XDR via helpers, infra deploys them.
 
 ---
 
@@ -232,7 +232,7 @@ Detailed per-repo maps: [`docs/REPOSITORIES.md`](./docs/REPOSITORIES.md).
      +-> Soroban execution (stellariq-contract IDs referenced in quotes/Tx builder)
 ```
 
-Protocol add path — `PRD.md:925`:
+Protocol add path - `PRD.md:925`:
 
 ```
   Create adapter (stellariq-data/packages/protocols/<name>/) -> Implement DexAdapter -> Register -> Start indexing
@@ -259,7 +259,7 @@ Scale target without redesign `PRD.md:1148`: `10+ protocols, 100k assets, 1M swa
 
 ---
 
-## Quickstart — All 4 Repos
+## Quickstart - All 4 Repos
 
 ### Prerequisites
 
@@ -271,7 +271,7 @@ Scale target without redesign `PRD.md:1148`: `10+ protocols, 100k assets, 1M swa
 | Terraform `>=1.6`, `aws-cli v2`, `kubectl >=1.29` | infra only |
 | Rust stable + `stellar` CLI 28 | `stellariq-contract` only |
 
-### 1. Data layer first — `stellariq-data`
+### 1. Data layer first - `stellariq-data`
 
 ```bash
 git clone https://github.com/StellarIQLabs/stellariq-data
@@ -285,7 +285,7 @@ docker compose up -d indexer price-engine analytics-engine routing-engine
 # ports: indexer 4101, price 4102, analytics 4103, routing 4104, internal-api 4110
 ```
 
-### 2. Contracts — `stellariq-contract` (standalone)
+### 2. Contracts - `stellariq-contract` (standalone)
 
 ```bash
 git clone https://github.com/StellarIQLabs/stellariq-contract
@@ -295,7 +295,7 @@ cargo test && stellar contract build --manifest-path Cargo.toml  # or per-contra
 # deploys are driven by stellariq-infra/scripts/deploy-contracts.sh
 ```
 
-### 3. Product layer — `stellariq-app`
+### 3. Product layer - `stellariq-app`
 
 ```bash
 git clone https://github.com/StellarIQLabs/stellariq-app
@@ -338,7 +338,7 @@ WS  /ws  -> { action: "subscribe", channel: "XLM/USDC:price" } // also :trades :
 
 Tiers: Free (public dashboard + basic), Developer `$19-49`, Pro `$99-299`, Enterprise custom `PRD.md:1164`. Rate limits via `x-ratelimit-*` + `Retry-After`; `x-api-key` optional (no key = free).
 
-Quotes resolve to contract IDs from `stellariq-contract`; `stellariq-app` then builds unsigned XDR via `@stellar/stellar-sdk` for wallet signing — never custody `PRD.md:129`.
+Quotes resolve to contract IDs from `stellariq-contract`; `stellariq-app` then builds unsigned XDR via `@stellar/stellar-sdk` for wallet signing - never custody `PRD.md:129`.
 
 ---
 
@@ -388,13 +388,13 @@ Full roadmap: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ## Contributing & Support
 
-* **Contributing** — [`CONTRIBUTING.md`](./CONTRIBUTING.md) (branch, commit, PR, code review).
-* **Code of Conduct** — [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md).
-* **Security** — [`SECURITY.md`](./SECURITY.md) — do not open public issues for vulnerabilities.
-* **Support** — [`SUPPORT.md`](./SUPPORT.md).
-* **PR template** — [`.github/pull_request_template.md`](./.github/pull_request_template.md).
-* **Issue templates** — [`.github/ISSUE_TEMPLATE/`](./.github/ISSUE_TEMPLATE/).
+* **Contributing** - [`CONTRIBUTING.md`](./CONTRIBUTING.md) (branch, commit, PR, code review).
+* **Code of Conduct** - [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md).
+* **Security** - [`SECURITY.md`](./SECURITY.md) - do not open public issues for vulnerabilities.
+* **Support** - [`SUPPORT.md`](./SUPPORT.md).
+* **PR template** - [`.github/pull_request_template.md`](./.github/pull_request_template.md).
+* **Issue templates** - [`.github/ISSUE_TEMPLATE/`](./.github/ISSUE_TEMPLATE/).
 
-License: MIT — see each repo's `LICENSE`.
+License: MIT - see each repo's `LICENSE`.
 
 > Spec is law: [`PRD.md`](../PRD.md) (root outside this repo) is the source of truth for product behavior. When docs diverge, PRD wins.

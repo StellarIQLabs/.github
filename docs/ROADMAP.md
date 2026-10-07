@@ -16,7 +16,7 @@ Source: `PRD.md:1314` (phases) + `PRD.md:1405` (Definition of Done) + `PRD.md:14
 | 6 | 8 | **Launch** `PRD.md:1391` | Perf `PRD.md:1121`, security review, monitoring, docs, demo env, production deploy | Next |
 | V1.5 | after MVP | Alerts, wallet analytics, Telegram/Discord, more protocols/assets, expanded WS/SDK | Planned |
 | V2 | after MVP | Full execution, smart splitting, portfolio, advanced arb, strategy + institutional API | Planned |
-| V3 | after MVP | Agent-ready financial intelligence OS — Data + Intelligence + Execution for autonomous agents `PRD.md:1455` | Vision |
+| V3 | after MVP | Agent-ready financial intelligence OS - Data + Intelligence + Execution for autonomous agents `PRD.md:1455` | Vision |
 
 ---
 
@@ -69,7 +69,7 @@ Primary metric: **number of active applications and developers relying on Stella
 
 ## What ships when
 
-* **MVP** — everything through Phase 6 is required before `v0.1.0`.
+* **MVP** - everything through Phase 6 is required before `v0.1.0`.
 * **V1.5** adds signals that feed the `PRD.md:641` alert layer and the expanded WS channels.
 * **V2** completes the `PRD.md:619` execution path (full aggregator, smart order splitting, limit orders, automation).
 * **V3** is the `Stellar DeFi Intelligence OS` `PRD.md:1455`.

@@ -45,16 +45,16 @@ StellarIQ **never** receives, stores, or logs private keys or seed phrases. `ste
 * **Ingress:** TLS via `kubernetes/ingress/` (cert-manager + Let's Encrypt), rate-limit + DDoS guards at the ALB/ingress layer before Fastify.
 * **App edge:** Zod validation on every route (`packages/schemas`), Helmet, CORS allowlist (per env), global sanitization.
 * **Auth:** `x-api-key` optional -> free tier when absent, `401` on invalid; `POST /v1/keys` guarded by `ADMIN_TOKEN`; per-tier Redis counters emit `x-ratelimit-*` + `Retry-After` on `429`.
-* **Data plane:** `DexAdapter` input is untrusted ledger/events — every adapter defensively parses XDR and returns `Swap | null`, discarding unknown events rather than throwing.
+* **Data plane:** `DexAdapter` input is untrusted ledger/events - every adapter defensively parses XDR and returns `Swap | null`, discarding unknown events rather than throwing.
 
 ---
 
 ## Secrets Handling
 
-* **No secrets in git** — enforced by `.gitignore` (`.env`, `*.pem`, `backend.hcl`, `**/terraform.tfstate*`), Husky gitleaks where configured, and CI secret scan.
-* **Terraform -> Secrets Manager** — `terraform/modules/secrets` writes `DATABASE_URL`, `REDIS_URL`, `ADMIN_TOKEN`, Soroban passphrases to AWS Secrets Manager.
-* **Secrets Manager -> K8s** — `kubernetes/secrets/external-secrets.yaml` (ExternalSecrets operator) syncs into `stellariq-*` namespaces as env. Rotation is a monthly `CronJob` (`kubernetes/secrets/rotation-cronjob.yaml`) plus manual `./scripts/secrets-rotation.sh`.
-* **Env at build:** `apps/web` `NEXT_PUBLIC_*` baked at `docker build` — never inject secret `ADMIN_TOKEN` as `NEXT_PUBLIC_*`.
+* **No secrets in git** - enforced by `.gitignore` (`.env`, `*.pem`, `backend.hcl`, `**/terraform.tfstate*`), Husky gitleaks where configured, and CI secret scan.
+* **Terraform -> Secrets Manager** - `terraform/modules/secrets` writes `DATABASE_URL`, `REDIS_URL`, `ADMIN_TOKEN`, Soroban passphrases to AWS Secrets Manager.
+* **Secrets Manager -> K8s** - `kubernetes/secrets/external-secrets.yaml` (ExternalSecrets operator) syncs into `stellariq-*` namespaces as env. Rotation is a monthly `CronJob` (`kubernetes/secrets/rotation-cronjob.yaml`) plus manual `./scripts/secrets-rotation.sh`.
+* **Env at build:** `apps/web` `NEXT_PUBLIC_*` baked at `docker build` - never inject secret `ADMIN_TOKEN` as `NEXT_PUBLIC_*`.
 
 ---
 
@@ -62,7 +62,7 @@ StellarIQ **never** receives, stores, or logs private keys or seed phrases. `ste
 
 * `dependabot` + `npm audit` / `cargo audit` in `security-scan.yml` (reused by all repos), failing on high/critical.
 * Image scanning (Trivy style) on every `build-images.yml` push.
-* Docker bases are pinned digests (`docker/node:22.11.0`, `docker/rust:1.83.0` in `stellariq-infra/docker/`) — rebuilt monthly.
+* Docker bases are pinned digests (`docker/node:22.11.0`, `docker/rust:1.83.0` in `stellariq-infra/docker/`) - rebuilt monthly.
 * Supply chain: `pnpm-lock.yaml` / `package-lock.json` / `Cargo.lock` committed, registry cache in CI, no `--force` installs.
 
 ---

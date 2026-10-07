@@ -46,11 +46,11 @@ Source of truth for product behavior: `PRD.md` (repo root outside `.github`). Th
 ```
   github.com/StellarIQLabs/
   |
-  +-- stellariq-app        apps/web (3000) | apps/api (4000) | packages/* | tests/e2e   (no contracts/ — moved)
+  +-- stellariq-app        apps/web (3000) | apps/api (4000) | packages/* | tests/e2e   (no contracts/ - moved)
   +-- stellariq-data       apps/{indexer,price-engine,analytics-engine,routing-engine,internal-api} | packages/{core,adapters,models,protocols} | database/migrations
   +-- stellariq-contract   Soroban workspace (Rust + stellar-cli) | contracts/<name>/ | scripts/ | Cargo.toml | rust-toolchain.toml
   +-- stellariq-infra      terraform/modules/* | kubernetes/* | docker/ | monitoring/ | perf/ | scripts/ (incl. deploy-contracts.sh)
-  +-- .github              this repo — health files + canonical docs
+  +-- .github              this repo - health files + canonical docs
 ```
 
 Dependencies (build order): `infra (network, db)` -> `data (intelligence flows)` -> `contract (on-chain IDs)` -> `app (consumes data + contract IDs)` -> `infra (workloads, ingress, CI/CD, contract deploys)`.
@@ -79,10 +79,10 @@ Dependencies (build order): `infra (network, db)` -> `data (intelligence flows)`
   +-- packages/ui            Design tokens, primitives, tables, charts, Storybook
   +-- packages/sdk           Typed REST + WS client (retry, typed errors, subscribe helpers)
   +-- tests/e2e              Playwright (boots api + prod web)
-  (contracts moved to stellariq-contract — app builds unsigned XDR via @stellar/stellar-sdk only)
+  (contracts moved to stellariq-contract - app builds unsigned XDR via @stellar/stellar-sdk only)
 ```
 
-### stellariq-data `PRD.md:295` — the intelligence core
+### stellariq-data `PRD.md:295` - the intelligence core
 
 ```
   stellariq-data/
@@ -101,13 +101,13 @@ Dependencies (build order): `infra (network, db)` -> `data (intelligence flows)`
   +-- docker-compose.yml     local parity stack
 ```
 
-Adapter seam — how a new protocol lands `PRD.md:925`:
+Adapter seam - how a new protocol lands `PRD.md:925`:
 
 ```
   Create stellariq-data/packages/protocols/<name>/  ->  implement DexAdapter  ->  register in registry  ->  start indexing
 ```
 
-### stellariq-contract — standalone Soroban execution `PRD.md:289`
+### stellariq-contract - standalone Soroban execution `PRD.md:289`
 
 ```
   stellariq-contract/
@@ -223,7 +223,7 @@ Contract add path (independent from data adapters): add Rust contract -> `stella
 
 * **Routing invariant:** Rank by **net output**, not lowest fee `PRD.md:602`. Every route response carries an explanation string so the dashboard can show why route C beat route A.
 * **Adapter isolation:** `DexAdapter` is the only contract between protocols and the platform; adding Aquarius or any future AMM never touches indexer core beyond registry.
-* **History moat `PRD.md:1280`:** PostgreSQL holds the normalized historical dataset (prices, swaps, liquidity) that powers future signals — time-partitioned indexes on `swaps.timestamp` and `prices.timestamp` carry the `1M swaps/day` headroom `PRD.md:1151`.
+* **History moat `PRD.md:1280`:** PostgreSQL holds the normalized historical dataset (prices, swaps, liquidity) that powers future signals - time-partitioned indexes on `swaps.timestamp` and `prices.timestamp` carry the `1M swaps/day` headroom `PRD.md:1151`.
 * **Availability `PRD.md:1128`:** `99.9%` via readiness probes (`/health`, `/ready`), ingestion retry + consistency checks, backup alarms, auto-rollback on deploy failure.
 * **Scale headroom:** Initial sizing already guards `10+ protocols, 100k assets, 1M swaps/day, 10k API users` without redesign; HPA on `api` and `routing-engine` absorbs quote spikes.
 

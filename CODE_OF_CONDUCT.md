@@ -36,10 +36,10 @@ Report to the maintainers via the contact listed in `SECURITY.md` or by opening 
 
 ## Enforcement Guidelines
 
-1.  **Correction** — private written warning, explanation of violation.
-2.  **Warning** — warning with consequences for continued behavior.
-3.  **Temporary Ban** — temporary interaction ban for a specified period.
-4.  **Permanent Ban** — permanent ban for patterns or severe violations.
+1.  **Correction** - private written warning, explanation of violation.
+2.  **Warning** - warning with consequences for continued behavior.
+3.  **Temporary Ban** - temporary interaction ban for a specified period.
+4.  **Permanent Ban** - permanent ban for patterns or severe violations.
 
 ## Attribution
 

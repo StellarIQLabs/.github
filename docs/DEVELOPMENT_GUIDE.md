@@ -13,7 +13,7 @@
 
 ---
 
-## First Clone — Four Repos
+## First Clone - Four Repos
 
 ```bash
 mkdir StellarIQLabs && cd StellarIQLabs
@@ -28,7 +28,7 @@ cat PRD.md               # spec is law (parent of all repos)
 
 ---
 
-## stellariq-data — Data Layer
+## stellariq-data - Data Layer
 
 ```bash
 cd stellariq-data
@@ -47,14 +47,14 @@ Structure `docs/REPOSITORIES.md` and pipeline `docs/DATA_PIPELINE.md`.
 
 Key conventions:
 
-* Relative cross-package imports: `../../../packages/core/src/getConfig.ts` — no workspace alias magic so `dist/` mirrors repo tree and Dockerfiles (`node dist/apps/<name>/src/index.js`) stay trivial — see `tsconfig.build.json`.
+* Relative cross-package imports: `../../../packages/core/src/getConfig.ts` - no workspace alias magic so `dist/` mirrors repo tree and Dockerfiles (`node dist/apps/<name>/src/index.js`) stay trivial - see `tsconfig.build.json`.
 * `packages/protocols/<name>/` implements `DexAdapter { getPools(), getPool(), parseSwap(), getQuote() }` `PRD.md:899`.
-* Migrations are `drizzle` sequential (`0001_assets` .. `0006_indexes`); never edit a committed migration — add a new one.
+* Migrations are `drizzle` sequential (`0001_assets` .. `0006_indexes`); never edit a committed migration - add a new one.
 * `scripts/backfill.mjs --from 1000 --to 2000` replays a ledger window after a cursor gap.
 
 ---
 
-## stellariq-app — Product Layer
+## stellariq-app - Product Layer
 
 ```bash
 cd stellariq-app
@@ -71,15 +71,15 @@ pnpm test:e2e   # Playwright in tests/e2e (boots api + prod web automatically, s
 
 Conventions:
 
-* Zod everywhere — `packages/schemas` defines every request/response; `apps/api/src/routes/*` validates at the edge and returns `{ error, message, statusCode }` envelopes.
-* Shared types in `packages/types`; UI tokens in `packages/ui` (Tailwind preset) — `apps/web` imports both.
-* SDK: `packages/sdk` typed client wrapping `openapi.json` (served by `apps/api` as `GET /openapi.json` + `GET /docs`). Never hand-roll fetch — update the spec, regenerate.
-* Contracts live in `StellarIQLabs/stellariq-contract` — app only holds `apps/web/src/lib/{contracts.ts,txBuilder.ts,wallet.ts}` integration helpers. See contract section below.
+* Zod everywhere - `packages/schemas` defines every request/response; `apps/api/src/routes/*` validates at the edge and returns `{ error, message, statusCode }` envelopes.
+* Shared types in `packages/types`; UI tokens in `packages/ui` (Tailwind preset) - `apps/web` imports both.
+* SDK: `packages/sdk` typed client wrapping `openapi.json` (served by `apps/api` as `GET /openapi.json` + `GET /docs`). Never hand-roll fetch - update the spec, regenerate.
+* Contracts live in `StellarIQLabs/stellariq-contract` - app only holds `apps/web/src/lib/{contracts.ts,txBuilder.ts,wallet.ts}` integration helpers. See contract section below.
 * Web routes: `app/(group)/page.tsx` with `loading.tsx`/`error.tsx`/`not-found.tsx` per PRD pages `PRD.md:767`.
 
 ---
 
-## stellariq-contract — Contracts (standalone)
+## stellariq-contract - Contracts (standalone)
 
 ```bash
 cd stellariq-contract
@@ -92,7 +92,7 @@ stellar contract build --manifest-path contracts/<name>/Cargo.toml
 
 ---
 
-## stellariq-infra — Local Parity + Cloud
+## stellariq-infra - Local Parity + Cloud
 
 ```bash
 cd stellariq-infra
@@ -152,9 +152,9 @@ ws.subscribe("XLM/USDC:price", (e) => console.log(e.price))
 | Symptom | Fix |
 |---------|-----|
 | `ECONNREFUSED 5432` in data | `docker compose up -d postgres && docker compose ps` (healthy?) + check `DATABASE_URL` |
-| `READY 503` from app `/ready` | `stellariq-data` internal-api `:4110` not up — start `stellariq-data` first (app degrades to free tier + mock) |
-| `x-ratelimit-*` `429` locally | Redis not running or `REDIS_URL` wrong — `docker compose up -d redis` |
-| `STELLAR_RPC_URL` errors | Check `.env` testnet URL; rate-limited fallback is automatic retry with backoff — see `apps/indexer/src/rpc.ts` |
+| `READY 503` from app `/ready` | `stellariq-data` internal-api `:4110` not up - start `stellariq-data` first (app degrades to free tier + mock) |
+| `x-ratelimit-*` `429` locally | Redis not running or `REDIS_URL` wrong - `docker compose up -d redis` |
+| `STELLAR_RPC_URL` errors | Check `.env` testnet URL; rate-limited fallback is automatic retry with backoff - see `apps/indexer/src/rpc.ts` |
 | `terraform init` fails | Missing `backend.hcl` (copy from `backend.hcl.example`) or `aws sso login` required |
 
 ## Where to read more

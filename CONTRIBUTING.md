@@ -1,6 +1,6 @@
 # Contributing to StellarIQ
 
-Thanks for contributing — every PR makes the intelligence layer sharper.
+Thanks for contributing - every PR makes the intelligence layer sharper.
 
 ## Where to contribute
 
@@ -12,7 +12,7 @@ Thanks for contributing — every PR makes the intelligence layer sharper.
 | Infra, K8s, CI/CD, monitoring | `StellarIQLabs/stellariq-infra` | `label: infra` |
 | Org-wide docs & health files | `StellarIQLabs/.github` (this repo) | `label: docs` |
 
-Read `PRD.md` first — product behavior is defined there, not in issues.
+Read `PRD.md` first - product behavior is defined there, not in issues.
 
 ## Development setup
 
@@ -47,7 +47,7 @@ Prereqs: Node `>=20`, pnpm `9.15.9` (app) / npm `>=10` (data), Docker, Terraform
   * `feat(infra): add price-engine HPA`
   * `docs: update data pipeline diagram`
   * `fix(api): handle 429 retry-after header`
-* One logical change per commit. No backdated timestamps — history must be verifiable.
+* One logical change per commit. No backdated timestamps - history must be verifiable.
 
 ## Pull requests
 
@@ -82,7 +82,7 @@ This is the intended extension point `PRD.md:133`:
 Create adapter -> Implement DexAdapter (getPools, getPool, parseSwap, getQuote) -> Register -> Start indexing
 ```
 
-Place it in `stellariq-data/packages/protocols/<name>/`, add tests, and wire it in the registry — no core rewrite required. Include a test event fixture.
+Place it in `stellariq-data/packages/protocols/<name>/`, add tests, and wire it in the registry - no core rewrite required. Include a test event fixture.
 
 ## Reporting issues
 
@@ -94,4 +94,4 @@ By participating you agree to `CODE_OF_CONDUCT.md`.
 
 ## License
 
-Contributions are MIT-licensed — same as each repo's `LICENSE`.
+Contributions are MIT-licensed - same as each repo's `LICENSE`.

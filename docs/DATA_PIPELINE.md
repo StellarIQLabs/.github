@@ -1,6 +1,6 @@
 # Data Pipeline
 
-How Stellar ledger and Soroban events become the intelligence served by the API — the core moat `PRD.md:1280`.
+How Stellar ledger and Soroban events become the intelligence served by the API - the core moat `PRD.md:1280`.
 
 ---
 
@@ -68,7 +68,7 @@ How Stellar ledger and Soroban events become the intelligence served by the API 
     on error: retry with backoff, DLQ after N, alert via monitoring/alerts
 ```
 
-* **Checkpoint resume:** Cursor stored in Postgres (`checkpoints` row) — survives pod restarts (`PRD.md:1133` auto retries). `scripts/backfill.mjs` replays any gap.
+* **Checkpoint resume:** Cursor stored in Postgres (`checkpoints` row) - survives pod restarts (`PRD.md:1133` auto retries). `scripts/backfill.mjs` replays any gap.
 * **Asset discovery `PRD.md:418`:** New `code:issuer` seen in any pool or swap -> insert `Asset` with `verification_status=unverified`, then enrichment fetches `name`, `home_domain` via Horizon.
 * **Consistency check:** `src/services/consistency` compares last indexed pool reserves vs on-chain via adapter `getPool()` hourly; drift metric exported to Prometheus (see `stellariq-infra/monitoring/consistency`).
 
@@ -92,7 +92,7 @@ Adding a protocol is four lines `PRD.md:925`:
 
 Adapters are deliberately isolated; Horizon parsing for `stellar-dex` lives next to Soroban XDR for `soroswap`/`phoenix` with no shared leakage beyond `Swap`/`Pool` types.
 
-Supported at MVP `PRD.md:1011`: Stellar native DEX + Soroswap + Phoenix + one additional major AMM (Aquarius) — architecture already handles `10+ protocols` `PRD.md:1148`.
+Supported at MVP `PRD.md:1011`: Stellar native DEX + Soroswap + Phoenix + one additional major AMM (Aquarius) - architecture already handles `10+ protocols` `PRD.md:1148`.
 
 ---
 
@@ -137,7 +137,7 @@ Confidence: `1 - (stddev / price)` clamped; downstream API always returns it so 
              +-- Large swap  $125k XLM->USDC  PRD.md:668  -> whale feed in web overview
 ```
 
-Signals are *signals*, not guaranteed arb — they simply surface normalized deltas `PRD.md:674`.
+Signals are *signals*, not guaranteed arb - they simply surface normalized deltas `PRD.md:674`.
 
 ---
 
@@ -161,7 +161,7 @@ Signals are *signals*, not guaranteed arb — they simply surface normalized del
                                       +--> explanation string per route ("won because deepest liquidity despite higher fee")
 ```
 
-Example `PRD.md:584` — route C (split) wins at `2372.03` vs `2367.91` / `2370.42` because net output dominates fee.
+Example `PRD.md:584` - route C (split) wins at `2372.03` vs `2367.91` / `2370.42` because net output dominates fee.
 
 Model: constant-product `x*y=k` for AMM pools, orderbook depth for Stellar DEX; `packages/protocols/math` is the shared implementation.
 
@@ -181,7 +181,7 @@ Model: constant-product `x*y=k` for AMM pools, orderbook depth for Stellar DEX; 
   Indexes: swaps(timestamp), prices(asset, timestamp), pools(tvl) with BRIN for scale to 1M swaps/day PRD.md:1151.
 ```
 
-Backups: `stellariq-infra/terraform/modules/backups` — daily AWS Backup plan + KMS + retention + `no-recent-backup` alarm.
+Backups: `stellariq-infra/terraform/modules/backups` - daily AWS Backup plan + KMS + retention + `no-recent-backup` alarm.
 
 ---
 

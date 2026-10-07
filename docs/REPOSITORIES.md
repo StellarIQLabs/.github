@@ -15,7 +15,7 @@ Build order: `infra (net, db)` -> `data (intelligence flows)` -> `contract (on-c
 
 ---
 
-## stellariq-app — Product & API `PRD.md:258`
+## stellariq-app - Product & API `PRD.md:258`
 
 ```
 stellariq-app/
@@ -36,7 +36,7 @@ stellariq-app/
 |   +-- ui/                 tokens, primitives, charts, Storybook
 |   +-- sdk/                Typed REST + WS client (retry, subscribe helpers)
 +-- tests/e2e/              Playwright (boots api + prod web)
-+-- .github/workflows/ci.yml   (Node quality/test/build/e2e/images — no Soroban job; contracts live in stellariq-contract)
++-- .github/workflows/ci.yml   (Node quality/test/build/e2e/images - no Soroban job; contracts live in stellariq-contract)
 +-- pnpm-workspace.yaml (apps/*, packages/*), tsconfig.base.json, .eslintrc.cjs, .prettierrc.json, .husky/
 ```
 
@@ -55,7 +55,7 @@ Env: copy `.env.example` -> `.env` at root, `apps/web/.env.example`, `apps/api/.
 
 ---
 
-## stellariq-data — Data & Intelligence `PRD.md:295` (named stellariq-data in PRD)
+## stellariq-data - Data & Intelligence `PRD.md:295` (named stellariq-data in PRD)
 
 ```
 stellariq-data/
@@ -93,7 +93,7 @@ stellariq-data/
 
 Ports (`stellariq-data/.env.example`): indexer `4101`, price `4102`, analytics `4103`, routing `4104`, internal-api `4110`.
 
-Entry pattern — plain Node:
+Entry pattern - plain Node:
 
 ```
   ts: apps/indexer/src/index.ts  ->  dist/apps/indexer/src/index.js
@@ -102,7 +102,7 @@ Entry pattern — plain Node:
 
 ---
 
-## stellariq-contract — Soroban Contracts (standalone) `PRD.md:289`
+## stellariq-contract - Soroban Contracts (standalone) `PRD.md:289`
 
 ```
 stellariq-contract/
@@ -128,7 +128,7 @@ Env: `STELLAR_RPC_URL`, network passphrase per env (see `stellariq-infra/terrafo
 
 ---
 
-## stellariq-infra — Operations `PRD.md:335`
+## stellariq-infra - Operations `PRD.md:335`
 
 ```
 stellariq-infra/
@@ -150,8 +150,8 @@ stellariq-infra/
 +-- kubernetes/
 |   +-- namespaces/         staging/prod quotas + default-deny network policies
 |   +-- web/, api/          deployments + services + HPAs + probes
-|   +-- indexer/            stateful (cursor PVC) — data
-|   +-- price-engine/, analytics-engine/ (+ CronJobs for OHLCV/volume), routing-engine/ (latency-tuned + HPA) — data
+|   +-- indexer/            stateful (cursor PVC) - data
+|   +-- price-engine/, analytics-engine/ (+ CronJobs for OHLCV/volume), routing-engine/ (latency-tuned + HPA) - data
 |   +-- ingress/            TLS (cert-manager/Let's Encrypt) + rate-limit/DDoS guards
 |   +-- secrets/            ExternalSecrets + monthly rotation CronJob
 |   +-- jobs/               db-migrate (pre-rollout), demo-seed
@@ -197,4 +197,4 @@ Prereqs: `terraform >=1.6`, `aws-cli v2` (SSO), `kubectl >=1.29`, Docker + Compo
         +---------- stellariq-infra/k8s + ci + contract deploys <--+
 ```
 
-Breaking this order (e.g. deploying app before data's internal-api is healthy) makes `/ready` return `503` by design — see `docs/DEPLOYMENT_GUIDE.md`.
+Breaking this order (e.g. deploying app before data's internal-api is healthy) makes `/ready` return `503` by design - see `docs/DEPLOYMENT_GUIDE.md`.

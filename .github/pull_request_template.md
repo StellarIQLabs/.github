@@ -46,7 +46,7 @@ pnpm install && pnpm lint && pnpm typecheck && pnpm test
 - [ ] PRD section referenced above
 - [ ] `docs/` or README updated if API, pipeline or deployment changed
 - [ ] `openapi.json` regenerated (`stellariq-app`) if API changed
-- [ ] `DexAdapter` contract preserved (`stellariq-data`) — `PRD.md:899`
+- [ ] `DexAdapter` contract preserved (`stellariq-data`) - `PRD.md:899`
 
 ## Security
 

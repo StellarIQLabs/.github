@@ -5,4 +5,4 @@ contact_links:
     about: "Ask a question or propose an idea outside the bug/feature flow."
   - name: "Security Vulnerability"
     url: "https://github.com/StellarIQLabs/.github/blob/main/SECURITY.md"
-    about: "Do NOT open a public issue — follow the private reporting flow."
+    about: "Do NOT open a public issue - follow the private reporting flow."
