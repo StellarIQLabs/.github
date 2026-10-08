@@ -13,7 +13,7 @@ No middleman holds the funds, and anyone can check where they went.
 
 ### Live demo (testnet)
 
-- **Web app:** **WEB_URL**
+- **Web app:** https://stellariq-web.vercel.app
 - **API docs (Swagger):** https://stellariq-api-p1hz.onrender.com/docs
 - **Campaigns API:** https://stellariq-api-p1hz.onrender.com/v1/campaigns
 - **Donations contract:** [`CBCHKIDR...F2KX`](https://stellar.expert/explorer/testnet/contract/CBCHKIDRFJ4KO2DGJEP75NJPYN65YVD6QOVVHC5IU7PRTHGHW75OF2KX)

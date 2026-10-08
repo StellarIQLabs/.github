@@ -1,7 +1,9 @@
-# StellarIQ - Intelligence for Stellar DeFi
+<p align="center"><img src="profile/assets/logo.svg" width="88" alt="StellarIQ Give logo" /></p>
 
-> **The data and intelligence infrastructure layer for Stellar DeFi.**  
-> Real-time prices, liquidity, swaps, markets and routing - unified into one API, dashboard and SDK.
+# StellarIQ Give - transparent charity donations on Stellar
+
+> **Give to a cause and see exactly where the money went.**  
+> Donations move straight from the donor's wallet to the charity's wallet, and every gift leaves a public receipt on the Stellar network. Market data, pricing and routing from StellarIQ let donors give in any asset.
 
 [![Stellar](https://img.shields.io/badge/Network-Stellar%20%7C%20Soroban-000000?logo=stellar)](https://stellar.org)
 [![Status](https://img.shields.io/badge/Status-MVP_Build-blue)](./docs/ROADMAP.md)
@@ -12,12 +14,14 @@
 
 | Resource | Link |
 | --- | --- |
-| **Web dashboard** | https://stellariq-app-web-49hh.vercel.app |
+| **Web app (StellarIQ Give)** | https://stellariq-web.vercel.app |
 | **API docs (Swagger UI)** | https://stellariq-api-p1hz.onrender.com/docs |
 | **API health check** | https://stellariq-api-p1hz.onrender.com/health |
+| **Campaigns API** | https://stellariq-api-p1hz.onrender.com/v1/campaigns |
+| **Donations contract (testnet)** | [`CBCHKIDR...F2KX`](https://stellar.expert/explorer/testnet/contract/CBCHKIDRFJ4KO2DGJEP75NJPYN65YVD6QOVVHC5IU7PRTHGHW75OF2KX) |
 | **Swap router contract (testnet)** | [`CC277AA6…VHSP`](https://stellar.expert/explorer/testnet/contract/CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP) |
 
-> ℹ️ The API runs on Render's free tier and may take 30-60s to cold-start after idle. Try it live: `curl https://stellariq-api-p1hz.onrender.com/v1/markets`
+> The API runs on Render's free tier. A scheduled pinger keeps it awake; if it has slept, the first request can take up to a minute. Try it live: `curl https://stellariq-api-p1hz.onrender.com/v1/campaigns`
 
 ---
 
