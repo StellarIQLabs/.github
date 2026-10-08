@@ -22,7 +22,7 @@ No middleman holds the funds, and anyone can check where they went.
 ### How it works
 
 ```
-  Donor wallet (Freighter)
+  Donor wallet (Freighter, Albedo, xBull, ...)
         |  signs one transaction
         v
   donations contract  --->  token moves donor -> charity wallet
